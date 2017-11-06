@@ -5,12 +5,14 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import Data.Image.SpriteSheet;
+import game.map.Map;
 
 public class Sprites {
 
 	private static HashMap<String,Sprites> sprites = null;
 	
 	//public static Sprites BEISPIEL = new Sprites(new Dimension(50,50), "", "Beispiel");
+	public static Sprites Ground = new Sprites(new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "sprites/ground.png", "ground");
 	
 	private SpriteSheet spritesheet;
 	private SpriteSheet shadowSpriteSheet;

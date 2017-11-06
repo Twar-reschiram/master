@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import Data.Components.CTextInput;
 import Engine.Engine;
+import files.Files;
+import game.map.MapLoader;
 import Data.Image.Image;
 
 public class GameManager {
@@ -15,9 +17,10 @@ public class GameManager {
 	CTextInput t;
 	
 	public GameManager(){
-		new Engine(800, 680, new Dimension(800,800));
+		new Engine(1920, 1080, new Dimension(1000,1000));
 		this.setKillAble();
 		new TickManager(this);
+		new MapLoader(200, 200, Files.MAP_TEST.getFile());
 	}
 
 	public void tick() {
