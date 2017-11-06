@@ -1,9 +1,0 @@
-datenbank:
-  Personen:
-    "#1"
-    Vorname:
-      "Bob"
-    Nachname:
-      "Pröller"
-  Sonstige:
-    "N/A"
