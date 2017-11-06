@@ -5,7 +5,8 @@ import File.File;
 public enum Files {
 	
 	LANGUAGE_EN(new File("language/en")),
-	UUID(new File("UUID/UUID"));
+	UUID(new File("UUID/UUID")),
+	MAP_TEST(new File("maps/test"));
 	
 	private File file;
 	
