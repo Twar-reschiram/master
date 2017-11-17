@@ -12,7 +12,8 @@ public class Sprites {
 	private static HashMap<String,Sprites> sprites = null;
 	
 	//public static Sprites BEISPIEL = new Sprites(new Dimension(50,50), "", "Beispiel");
-	public static Sprites Ground = new Sprites(new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "sprites/ground.png", "ground");
+	public static Sprites Ground = new Sprites(new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "/sprites/slot.png", "ground");
+	public static Sprites Slot = new Sprites(new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "/sprites/slot.png", "slot");
 	
 	private SpriteSheet spritesheet;
 	private SpriteSheet shadowSpriteSheet;
@@ -21,7 +22,7 @@ public class Sprites {
 		if(Sprites.sprites==null)Sprites.sprites = new HashMap<>();
 		Sprites.sprites.put(name, this);
 		this.spritesheet = new SpriteSheet(image, d);
-		this.shadowSpriteSheet = SpriteSheet.createShadowSpriteSheet(this.spritesheet);
+		//this.shadowSpriteSheet = SpriteSheet.createShadowSpriteSheet(this.spritesheet);
 		System.out.println(this.shadowSpriteSheet);
 	}
 	

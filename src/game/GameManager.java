@@ -3,12 +3,16 @@ package game;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import Data.Location;
 import Data.Components.CTextInput;
 import Engine.Engine;
 import files.Files;
+import game.dev.mapEditor.MapEditor;
 import game.map.MapLoader;
+import sprites.Sprites;
 import Data.Image.Image;
 
 public class GameManager {
@@ -20,7 +24,7 @@ public class GameManager {
 		new Engine(1920, 1080, new Dimension(1000,1000));
 		this.setKillAble();
 		new TickManager(this);
-		new MapLoader(200, 200, Files.MAP_TEST.getFile());
+		new MapEditor(new MapLoader(200, 200, Files.MAP_TEST.getFile()));
 	}
 
 	public void tick() {
@@ -40,5 +44,4 @@ public class GameManager {
 			public void windowActivated(WindowEvent e) {}
 		});
 	}
-
 }

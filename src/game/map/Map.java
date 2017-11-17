@@ -2,7 +2,7 @@ package game.map;
 
 public class Map {
 	
-	public static int DEFAULT_SQUARESIZE = 30;
+	public static int DEFAULT_SQUARESIZE = 40;
 	
 	private int Width;
 	private int Height;
