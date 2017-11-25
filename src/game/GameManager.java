@@ -17,12 +17,12 @@ public class GameManager {
 	Player p;
 	
 	public GameManager(){
-		new Engine(1920, 1080, new Dimension(1000,1000));
+		new Engine(1920, 1080, new Dimension(2000,2000));
 		this.setKillAble();
 		new TickManager(this);
-		mapEditor = new MapEditor(new MapLoader(200, 200, Files.MAP_TEST.getFile()));
-		Engine.getEngine(this, this.getClass()).addLayer(false, true, false, 3);
-		new Mouse(3);
+		mapEditor = new MapEditor(new MapLoader(Files.MAP_TEST.getFile()));
+		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 4);
+		new Mouse(4);
 		p = new Player();
 	}
 	

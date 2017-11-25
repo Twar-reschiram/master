@@ -33,8 +33,12 @@ public class Map {
 	}
 	
 	public Map(int[][] ground, int[][] build){
+		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 0);
+		Engine.getEngine(this, this.getClass()).addLayer(true, false, false, 1);
 		this.Width = build.length;
 		this.Height = build[0].length;
+		this.ground = new int[this.Width][this.Height];
+		this.build = new int[this.Width][this.Height];
 		
 		for(int x = 0; x<this.Width; x++){
 			for(int y = 0; y<this.Height; y++){
@@ -64,15 +68,18 @@ public class Map {
 		Point p = new Point(x, y);
 		if(res==0){
 			if(ground[x][y]!=0){
+				System.out.println("remove");
 				Engine.getEngine(this, this.getClass()).removeImage(groundLayer, groundImages.get(p));
 				groundImages.remove(p);
 			}
 		}else{
 			if(ground[x][y]!=0){
 				groundImages.get(p).setSpriteSheet(Resources.getResource(res).getSprites().getSpriteSheet());
+				groundImages.get(p).setSpriteState(Resources.getResource(res).getSpriteIDs()[0]);
 				Engine.getEngine(this, this.getClass()).update();
 			}else{
 				groundImages.put(p,new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", Resources.getResource(res).getSprites().getSpriteSheet(), null));
+				groundImages.get(p).setSpriteState(Resources.getResource(res).getSpriteIDs()[0]);
 				Engine.getEngine(this, this.getClass()).addImage(groundImages.get(p), groundLayer);
 			}
 		}
@@ -89,9 +96,11 @@ public class Map {
 		}else{
 			if(build[x][y]!=0){
 				buildImages.get(p).setSpriteSheet(Resources.getResource(res).getSprites().getSpriteSheet());
+				buildImages.get(p).setSpriteState(Resources.getResource(res).getSpriteIDs()[0]);
 				Engine.getEngine(this, this.getClass()).update();
 			}else{
 				buildImages.put(p,new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", Resources.getResource(res).getSprites().getSpriteSheet(), null));
+				buildImages.get(p).setSpriteState(Resources.getResource(res).getSpriteIDs()[0]);
 				Engine.getEngine(this, this.getClass()).addImage(buildImages.get(p), buildLayer);
 			}
 		}

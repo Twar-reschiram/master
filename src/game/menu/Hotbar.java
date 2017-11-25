@@ -31,7 +31,7 @@ public class Hotbar{
 			this.backs[i] = new Image(new Location(l.getX()+(Map.DEFAULT_SQUARESIZE+20)*i, l.getY()), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", Sprites.Slot.getSpriteSheet(), null);
 			this.backs[i].disabled = true;
 			Engine.getEngine(this, this.getClass()).addImage(this.backs[i], layer);
-			this.ims[i] = new Image(new Location(l.getX()+(Map.DEFAULT_SQUARESIZE+20)*i+(i+1)*5, l.getY()+5), new Dimension(Map.DEFAULT_SQUARESIZE-10, Map.DEFAULT_SQUARESIZE-10), "", new SpriteSheet(), null);
+			this.ims[i] = new Image(new Location(l.getX()+(Map.DEFAULT_SQUARESIZE+20)*i+5, l.getY()+5), new Dimension(Map.DEFAULT_SQUARESIZE-10, Map.DEFAULT_SQUARESIZE-10), "", new SpriteSheet(), null);
 			this.ims[i].disabled = true;
 			Engine.getEngine(this, this.getClass()).addImage(this.ims[i], layer);
 		}
@@ -46,11 +46,18 @@ public class Hotbar{
 						resources[r] = null;
 						r=resources.length;
 						ims[i].setSpriteSheet(inv[i].getSprites().getSpriteSheet());
+						ims[i].setSpriteState(inv[i].getSpriteIDs()[0]);
 					}
 				}
 			}
 		}
 		Engine.getEngine(this, this.getClass()).update();
+	}
+	
+	public void setRecource(Resources res, int id){
+		inv[id] = res;
+		ims[id].setSpriteSheet(inv[id].getSprites().getSpriteSheet());
+		ims[id].setSpriteState(inv[id].getSpriteIDs()[0]);
 	}
 	
 	public void show(){
@@ -89,8 +96,16 @@ public class Hotbar{
 		if(state==-1)return null;
 		return inv[state];
 	}
+	
+	public int getState() {
+		return state;
+	}
 
 	public boolean contains(Point p) {
 		return hb.contains(p);
+	}
+
+	public void setSelected(int selected) {
+		this.state = selected;
 	}
 }

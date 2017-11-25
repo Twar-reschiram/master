@@ -10,6 +10,9 @@ import Engine.Engine;
 
 public class Mouse {
 	
+	public static int XOff = 0;
+	public static int YOff = 0;
+	
 	private Point p = new Point(0,0);
 	private Image img;
 	private int layer;
@@ -28,15 +31,20 @@ public class Mouse {
 	
 	public void tick(){
 		Point ep = Engine.getInputManager().MousePosition();
-		if(ep.x != img.Hitbox.getX() || ep.y != img.Hitbox.getY()){
+		if(ep.x != img.Hitbox.getX() || ep.y != img.Hitbox.getY() || ep.x+XOff != img.Hitbox.getX() || ep.y+YOff != img.Hitbox.getY()){
 			Location l = img.Hitbox.getLocation().clone();
-			img.Hitbox.setLocation(ep.x, ep.y);
+			img.Hitbox.setLocation(ep.x+XOff, ep.y+YOff);
 			Engine.getEngine(this, this.getClass()).updateImage(layer, img, l);
 		}
 	}
 	
-	public void setImage(SpriteSheet s){
+	public void setImage(SpriteSheet s, int id){
 		img.setSpriteSheet(s);
+		img.setSpriteState(id);
 		Engine.getEngine(this, this.getClass()).update();
+	}
+
+	public Location getPosition() {
+		return img.Hitbox.getLocation();
 	}
 }

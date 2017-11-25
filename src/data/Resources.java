@@ -1,11 +1,12 @@
 package data;
 
-import Data.Image.SpriteSheet;
 import sprites.Sprites;
 
 public enum Resources {
 	
-	Grass(101, Sprites.Ground, 0);	
+	Grass(101, Sprites.Ground, 0),	
+	Dirt(102, Sprites.Ground, 1),	
+	Water(103, Sprites.Ground, 2);	
 	
 	private int id;
 	private Sprites sprites;
@@ -13,8 +14,10 @@ public enum Resources {
 	
 	private static Resources[] res = loadRescources();
 	private static Resources[] loadRescources() {
-		Resources[] res = new Resources[1];
+		Resources[] res = new Resources[3];
 		res[0] = Grass;
+		res[1] = Dirt;
+		res[2] = Water;
 		return res;
 	}
 	
