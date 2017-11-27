@@ -40,7 +40,6 @@ public class MapEditor {
 
 	private void createHotbar() {
 		hotbar = new Hotbar(9, new Location((1920-60*9)/2,1000), 2);
-		hotbar.addRecources(Resources.Grass);
 		hotbar.show();
 	}
 
@@ -64,7 +63,7 @@ public class MapEditor {
 					}
 				});	
 				if(Resources.getResource(101+id)!=null){
-					Image I = new Image(new Location(1920-x*50-65,y*55+95), new Dimension(30, 30), "", Resources.getResource(101+id).getSprites().getSpriteSheet(), null);
+					Image I = new Image(new Location(1920-x*50-65,y*50+95), new Dimension(30, 30), "", Resources.getResource(101+id).getSprites().getSpriteSheet(), null);
 					I.setSpriteState(Resources.getResource(101+id).getSpriteIDs()[0]);
 					menu.addButton(I, new Action() {
 						@Override

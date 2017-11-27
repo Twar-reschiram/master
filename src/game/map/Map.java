@@ -5,6 +5,8 @@ import java.awt.Point;
 import java.util.HashMap;
 
 import Data.Location;
+import Data.Animation.Animation;
+import Data.Animation.SyncAnimation;
 import Data.Image.Image;
 import Engine.Engine;
 import data.Resources;
@@ -20,8 +22,10 @@ public class Map {
 	
 	private int[][] ground;
 	private HashMap<Point, Image> groundImages = new HashMap<>();
+	private HashMap<Point, SyncAnimation> groundAnimation = new HashMap<>();
 	private int[][] build;
 	private HashMap<Point, Image> buildImages = new HashMap<>();
+	private HashMap<Point, SyncAnimation> buildAnimation = new HashMap<>();
 	
 	public Map(int width, int height){
 		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 0);
@@ -71,16 +75,25 @@ public class Map {
 				System.out.println("remove");
 				Engine.getEngine(this, this.getClass()).removeImage(groundLayer, groundImages.get(p));
 				groundImages.remove(p);
+				if(groundAnimation.containsKey(p)){
+					groundAnimation.get(p).stop();
+					groundAnimation.remove(p);
+				}
 			}
 		}else{
+			Resources resource = Resources.getResource(res);
 			if(ground[x][y]!=0){
-				groundImages.get(p).setSpriteSheet(Resources.getResource(res).getSprites().getSpriteSheet());
-				groundImages.get(p).setSpriteState(Resources.getResource(res).getSpriteIDs()[0]);
+				if(resource.hasAnimation())groundAnimation.get(p).stop();
+				groundImages.get(p).setSpriteSheet(resource.getSprites().getSpriteSheet());
+				groundImages.get(p).setSpriteState(resource.getSpriteIDs()[0]);
+				if(resource.hasAnimation())groundAnimation.get(p).setIds(resource.getSpriteIDs());
+				if(resource.hasAnimation())groundAnimation.get(p).start();
 				Engine.getEngine(this, this.getClass()).update();
 			}else{
-				groundImages.put(p,new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", Resources.getResource(res).getSprites().getSpriteSheet(), null));
-				groundImages.get(p).setSpriteState(Resources.getResource(res).getSpriteIDs()[0]);
+				groundImages.put(p,new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", resource.getSprites().getSpriteSheet(), null));
+				groundImages.get(p).setSpriteState(resource.getSpriteIDs()[0]);
 				Engine.getEngine(this, this.getClass()).addImage(groundImages.get(p), groundLayer);
+				if(resource.hasAnimation())groundAnimation.put(p, new SyncAnimation(false, res, 100, groundLayer, groundImages.get(p), resource.getSpriteIDs()));
 			}
 		}
 		ground[x][y] = res;

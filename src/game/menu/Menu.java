@@ -79,7 +79,7 @@ public class Menu {
 		}else if(changeSize == 1){
 			if(background.Hitbox.getWidth()!=0){
 				grow -= Menu.OPENSPEED*TickManager.getDeltaTime();
-				if(grow<=0){
+				if((int)grow<=0){
 					grow = 0;
 					background.disabled = true;
 					visible = false;
