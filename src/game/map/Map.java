@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import Data.Location;
 import Data.Animation.Animation;
-import Data.Animation.SyncAnimation;
 import Data.Image.Image;
 import Engine.Engine;
 import data.Resources;
@@ -22,10 +21,10 @@ public class Map {
 	
 	private int[][] ground;
 	private HashMap<Point, Image> groundImages = new HashMap<>();
-	private HashMap<Point, SyncAnimation> groundAnimation = new HashMap<>();
+	private HashMap<Point, Animation> groundAnimation = new HashMap<>();
 	private int[][] build;
 	private HashMap<Point, Image> buildImages = new HashMap<>();
-	private HashMap<Point, SyncAnimation> buildAnimation = new HashMap<>();
+	private HashMap<Point, Animation> buildAnimation = new HashMap<>();
 	
 	public Map(int width, int height){
 		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 0);
@@ -93,7 +92,7 @@ public class Map {
 				groundImages.put(p,new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", resource.getSprites().getSpriteSheet(), null));
 				groundImages.get(p).setSpriteState(resource.getSpriteIDs()[0]);
 				Engine.getEngine(this, this.getClass()).addImage(groundImages.get(p), groundLayer);
-				if(resource.hasAnimation())groundAnimation.put(p, new SyncAnimation(false, res, 100, groundLayer, groundImages.get(p), resource.getSpriteIDs()));
+				if(resource.hasAnimation())groundAnimation.put(p, resource.getAnimationType().newAnimation(false, groundLayer, groundImages.get(p), resource));
 			}
 		}
 		ground[x][y] = res;
