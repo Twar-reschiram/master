@@ -18,9 +18,9 @@ public class WaterAnimation extends Animation{
 	public WaterAnimation(Boolean newImage, Double duration, Integer layer, Image Image, Resources res) {
 		super(newImage, duration, layer, Image, res.getSpriteIDs());
 		
-		if(!Data.containsKey(res)) Data.put(res, new ArrayList<>());
-		else if(Data.get(res).size()>0) AnimationManager.remove(this);
-		Data.get(res).add(this);
+		this.res = res;
+		
+		start();
 		
 		this.setAction(new Action() {
 			
@@ -31,23 +31,30 @@ public class WaterAnimation extends Animation{
 					index = 0;
 				}
 //				System.out.println(index+"|"+System.currentTimeMillis()+" <--- "+this);
-				for(Animation anim: Data.get(res))anim.setImage(index);
+//				System.out.println(Data.get(res).size());
+				for(WaterAnimation anim: Data.get(res)){
+					if(anim.res.getID()!=res.getID())System.out.println("Error");
+					anim.setImage(index);
+				}
 				index++;
 			}
 		});
 		
 	}
 	
-	
+	@Override
 	public Animation start(){
+//		System.out.println("Start");
 		if(!Data.containsKey(res)) Data.put(res, new ArrayList<>());
-		else if(Data.get(res).size()==0) this.id = AnimationManager.register(this);
+		if(Data.get(res).size()==0) this.id = AnimationManager.register(this);
+		else if(Data.get(res).size()>0) AnimationManager.remove(this);
 		Data.get(res).add(this);
 		active = true;
 		lastTime = System.currentTimeMillis();
 		return this;
 	}
 	
+	@Override
 	public void setIds(int... ids){
 		if(Data.containsKey(res) && Data.get(res).size()>0){
 			Data.get(res).get(0).setIdsIndependent(ids);
@@ -61,18 +68,21 @@ public class WaterAnimation extends Animation{
 		spriteIDs = ids;		
 	}
 	
+	@Override
 	public void stop(){
+//		System.out.println("Stop");
 		if(Data.containsKey(res) && Data.get(res).size()>0){
 			if(Data.get(res).get(0).equals(this) && Data.get(res).size()>1){
-				AnimationManager.remove(this);
 				Data.get(res).get(1).id = AnimationManager.register(Data.get(res).get(1));
 			}
 			Data.get(res).remove(this);
+			AnimationManager.remove(this);
 		}
 		active = false;
 		image.setSpriteState(0);
 	}
 
+	@Override
 	public void setImage(int index) {
 		if(Data.containsKey(res) && Data.get(res).size()>0){
 			Data.get(res).get(0).index = index;

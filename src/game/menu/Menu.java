@@ -2,6 +2,7 @@ package game.menu;
 
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import Data.Events.Action;
@@ -13,8 +14,8 @@ public class Menu {
 	
 	private static int OPENSPEED = 15;
 	
-	private HashMap<Image, Action> buttons = new HashMap<>();
-	private HashMap<Image, Dimension> buttonSize = new HashMap<>();
+	private HashMap<Integer, ArrayList<Button>> buttons = new HashMap<>();
+	private HashMap<Integer, Boolean> buttonActive = new HashMap<>();
 	private Image background;
 	private Dimension size;
 	private boolean visible = false;
@@ -31,9 +32,11 @@ public class Menu {
 		Engine.getEngine(this, this.getClass()).addImage(background, layer);
 	}
 	
-	public void addButton(Image I, Action a){
-		buttons.put(I, a);
-		buttonSize.put(I, new Dimension(I.Hitbox.getWidth(), I.Hitbox.getX()));
+	public void addButton(int id, Image I, Action a){
+		if(!buttons.containsKey(id))buttons.put(id, new ArrayList<Button>());
+		if(!buttonActive.containsKey(id))buttonActive.put(id, true);
+		Button button = new Button(a, I);
+		buttons.get(id).add(button);
 		I.disabled = true;
 		Engine.getEngine(this, this.getClass()).addImage(I, layer);
 	}
@@ -44,17 +47,15 @@ public class Menu {
 			visible = true;
 			background.disabled = false;
 			background.Hitbox.setDimension(0,background.Hitbox.getHeigth());
-//			for(Image button: this.buttons.keySet()){
-//				button.disabled = false;
-//				button.Hitbox.setDimension(0,button.Hitbox.getHeigth());
-//			}
 		}
 	}
 	
 	public void hide(){
 		if(visible){
 			changeSize = 1;	
-			for(Image button: buttonSize.keySet())button.disabled = true;
+			for(int id: buttonActive.keySet()){
+				for(Button button: buttons.get(id))button.getImage().disabled = true;
+			}
 		}
 	}
 	
@@ -65,15 +66,12 @@ public class Menu {
 				if(grow>=size.width){
 					grow = size.width;
 					changeSize = -1;
-					for(Image button: buttonSize.keySet())button.disabled = false;
+					for(int id: buttonActive.keySet()){
+						if(buttonActive.get(id))for(Button button: buttons.get(id))button.getImage().disabled = false;
+					}
 				}
 				background.Hitbox.setDimension((int) grow, background.Hitbox.getHeigth());
 				background.Hitbox.setLocation((int) (size.getHeight()-grow), background.Hitbox.getY());
-//				for(Image button: buttonSize.keySet()){
-//					int width = (int) ((grow/size.width)*buttonSize.get(button).getWidth());
-//					button.Hitbox.setDimension(width, button.Hitbox.getHeigth());
-//					button.Hitbox.setLocation((int) (buttonSize.get(button).getHeight()-width), button.Hitbox.getY());
-//				}
 				Engine.getEngine(this, this.getClass()).update();
 			}
 		}else if(changeSize == 1){
@@ -86,28 +84,19 @@ public class Menu {
 				}
 				background.Hitbox.setDimension((int) grow, background.Hitbox.getHeigth());
 				background.Hitbox.setLocation((int) (size.getHeight()-grow), background.Hitbox.getY());
-//				for(Image button: buttonSize.keySet()){
-//					if(grow<=0){
-//						changeSize = -1;
-//						button.disabled = true;
-//						button.Hitbox.setDimension(0, button.Hitbox.getHeigth());
-//						button.Hitbox.setLocation((int) (buttonSize.get(button).getHeight()), button.Hitbox.getY());
-//					}else {
-//						int width = (int) ((grow/size.width)*buttonSize.get(button).getWidth());
-//						button.Hitbox.setDimension(width, button.Hitbox.getHeigth());
-//						button.Hitbox.setLocation((int) (buttonSize.get(button).getHeight()-width), button.Hitbox.getY());
-//					}
-//				}
 				Engine.getEngine(this, this.getClass()).update();
 			}
 		}else if(changeSize == -1){
 			if(visible&&Engine.getInputManager().getMouseButton().contains(MouseEvent.BUTTON1)){
-				for(Image button: buttons.keySet()){
-					if(button.Hitbox.contains(Engine.getInputManager().MousePosition())){
-						buttons.get(button).act(this);
+				for(int id: buttonActive.keySet()){
+					if(buttonActive.get(id))for(Button button: buttons.get(id)){
+						if(button.getImage().Hitbox.contains(Engine.getInputManager().MousePosition())){
+							button.getAction().act(this);
+						}
 					}
 				}
 			}
+			
 		}
 	}
 
@@ -117,6 +106,20 @@ public class Menu {
 
 	public boolean isOpen() {
 		return changeSize==-1;
+	}
+	
+	public void disableButtons(int id){
+		buttonActive.put(id, false);
+		for(Button button:buttons.get(id)){
+			button.getImage().disabled = true;
+		}
+	}
+	
+	public void enableButtons(int id){
+		buttonActive.put(id, true);
+		for(Button button:buttons.get(id)){
+			button.getImage().disabled = false;
+		}
 	}
 
 }

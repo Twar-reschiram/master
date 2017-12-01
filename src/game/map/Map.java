@@ -14,48 +14,48 @@ public class Map {
 	
 	public static int DEFAULT_SQUARESIZE = 40;
 	private int groundLayer = 0;
-	private int buildLayer = 1;
+	private int buildLayer = 2;
 	
 	private int Width;
 	private int Height;
 	
-	private int[][] ground;
-	private HashMap<Point, Image> groundImages = new HashMap<>();
-	private HashMap<Point, Animation> groundAnimation = new HashMap<>();
-	private int[][] build;
-	private HashMap<Point, Image> buildImages = new HashMap<>();
-	private HashMap<Point, Animation> buildAnimation = new HashMap<>();
+	private int[][][] ground;
+	private HashMap<Point, Block> groundBlocks = new HashMap<>();
+	private int[][][] build;
+	private HashMap<Point, Block> buildBlocks = new HashMap<>();
 	
 	public Map(int width, int height){
-		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 0);
-		Engine.getEngine(this, this.getClass()).addLayer(true, false, false, 1);
+		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 0,1);
+		Engine.getEngine(this, this.getClass()).addLayer(true, false, false, 2,3);
 		this.Width = width;
 		this.Height = height;
-		this.ground = new int[this.Width][this.Height];
-		this.build = new int[this.Width][this.Height];
+		this.ground = new int[this.Width][this.Height][2];
+		this.build = new int[this.Width][this.Height][2];
 	}
 	
-	public Map(int[][] ground, int[][] build){
-		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 0);
-		Engine.getEngine(this, this.getClass()).addLayer(true, false, false, 1);
+	public Map(int[][][] ground, int[][][] build){
+		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 0,1);
+		Engine.getEngine(this, this.getClass()).addLayer(true, false, false, 2,3);
 		this.Width = build.length;
 		this.Height = build[0].length;
-		this.ground = new int[this.Width][this.Height];
-		this.build = new int[this.Width][this.Height];
+		this.ground = new int[this.Width][this.Height][2];
+		this.build = new int[this.Width][this.Height][2];
 		
 		for(int x = 0; x<this.Width; x++){
 			for(int y = 0; y<this.Height; y++){
-				addToGround(ground[x][y], x, y);
-				addToBuild(build[x][y], x, y);
+				for(int i = 0; i<2; i++){
+					addToGround(ground[x][y][i], x, y);
+					addToBuild(build[x][y][i], x, y);
+				}
 			}
 		}
 	}
 
-	public int[][] getGround() {
+	public int[][][] getGround() {
 		return ground;
 	}	
 
-	public int[][] getBuild() {
+	public int[][][] getBuild() {
 		return build;
 	}
 
@@ -70,53 +70,93 @@ public class Map {
 	public void addToGround(int res, int x, int y) {
 		Point p = new Point(x, y);
 		if(res==0){
-			if(ground[x][y]!=0){
-				System.out.println("remove");
-				Engine.getEngine(this, this.getClass()).removeImage(groundLayer, groundImages.get(p));
-				groundImages.remove(p);
-				if(groundAnimation.containsKey(p)){
-					groundAnimation.get(p).stop();
-					groundAnimation.remove(p);
+			for(int i = 0; i<2; i++){
+				if(ground[x][y][i]!=0){
+					Engine.getEngine(this, this.getClass()).removeImage(groundLayer+Resources.getResource(ground[x][y][i]).getLayerUp(), groundBlocks.get(p).getImage(i));
+					if(groundBlocks.get(p).getAnimation(i)!=null){
+						groundBlocks.get(p).getAnimation(i).stop();
+					}
 				}
+				ground[x][y][i] = 0;
 			}
+			groundBlocks.remove(p);
 		}else{
+//			System.out.println(res);
 			Resources resource = Resources.getResource(res);
-			if(ground[x][y]!=0){
-				if(resource.hasAnimation())groundAnimation.get(p).stop();
-				groundImages.get(p).setSpriteSheet(resource.getSprites().getSpriteSheet());
-				groundImages.get(p).setSpriteState(resource.getSpriteIDs()[0]);
-				if(resource.hasAnimation())groundAnimation.get(p).setIds(resource.getSpriteIDs());
-				if(resource.hasAnimation())groundAnimation.get(p).start();
+			if(ground[x][y][resource.getLayerUp()]!=0 && groundBlocks.get(p).getImage(resource.getLayerUp())!=null){
+				Block block = groundBlocks.get(p);
+				if(block.getAnimation(resource.getLayerUp())!=null)block.getAnimation(resource.getLayerUp()).stop();
+				block.getImage(resource.getLayerUp()).setSpriteSheet(resource.getSprites().getSpriteSheet());
+				block.getImage(resource.getLayerUp()).setSpriteState(resource.getSpriteIDs()[0]);
+				if(resource.hasAnimation()){
+					block.set(block.getImage(resource.getLayerUp()), resource.getAnimationType().newAnimation(false, groundLayer+resource.getLayerUp(), block.getImage(resource.getLayerUp()), resource), resource.getLayerUp());
+//					block.getAnimation(resource.getLayerUp()).start();
+				}
 				Engine.getEngine(this, this.getClass()).update();
 			}else{
-				groundImages.put(p,new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", resource.getSprites().getSpriteSheet(), null));
-				groundImages.get(p).setSpriteState(resource.getSpriteIDs()[0]);
-				Engine.getEngine(this, this.getClass()).addImage(groundImages.get(p), groundLayer);
-				if(resource.hasAnimation())groundAnimation.put(p, resource.getAnimationType().newAnimation(false, groundLayer, groundImages.get(p), resource));
+				Image image = new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", resource.getSprites().getSpriteSheet(), null);
+				image.setSpriteState(resource.getSpriteIDs()[0]);
+				Engine.getEngine(this, this.getClass()).addImage(image, groundLayer+resource.getLayerUp());
+				Animation anim = null;
+				if(resource.hasAnimation())anim = resource.getAnimationType().newAnimation(false, groundLayer+resource.getLayerUp(), image, resource);
+				if(groundBlocks.containsKey(p)){
+					groundBlocks.get(p).set(image, anim, resource.getLayerUp());
+				}else{
+					if(resource.getLayerUp()==0){
+						groundBlocks.put(p, new Block(image, null, anim, null));
+					}else{
+						groundBlocks.put(p, new Block(null, image, null, null));					
+					}
+				}
 			}
+			ground[x][y][resource.getLayerUp()] = res;
 		}
-		ground[x][y] = res;
 	}
 	
 	private void addToBuild(int res, int x, int y) {
 		Point p = new Point(x, y);
 		if(res==0){
-			if(build[x][y]!=0){
-				Engine.getEngine(this, this.getClass()).removeImage(buildLayer, buildImages.get(p));
-				buildImages.remove(p);
+			for(int i = 0; i<2; i++){
+				if(build[x][y][i]!=0){
+					Engine.getEngine(this, this.getClass()).removeImage(buildLayer+Resources.getResource(build[x][y][i]).getLayerUp(), buildBlocks.get(p).getImage(i));
+					if(buildBlocks.get(p).getAnimation(i)!=null){
+						buildBlocks.get(p).getAnimation(i).stop();
+					}
+				}
+				build[x][y][i] = 0;
 			}
+			buildBlocks.remove(p);
 		}else{
-			if(build[x][y]!=0){
-				buildImages.get(p).setSpriteSheet(Resources.getResource(res).getSprites().getSpriteSheet());
-				buildImages.get(p).setSpriteState(Resources.getResource(res).getSpriteIDs()[0]);
+//			System.out.println(res);
+			Resources resource = Resources.getResource(res);
+			if(build[x][y][resource.getLayerUp()]!=0 && buildBlocks.get(p).getImage(resource.getLayerUp())!=null){
+				Block block = buildBlocks.get(p);
+				if(block.getAnimation(resource.getLayerUp())!=null)block.getAnimation(resource.getLayerUp()).stop();
+				block.getImage(resource.getLayerUp()).setSpriteSheet(resource.getSprites().getSpriteSheet());
+				block.getImage(resource.getLayerUp()).setSpriteState(resource.getSpriteIDs()[0]);
+				if(resource.hasAnimation()){
+					block.set(block.getImage(resource.getLayerUp()), resource.getAnimationType().newAnimation(false, buildLayer+resource.getLayerUp(), block.getImage(resource.getLayerUp()), resource), resource.getLayerUp());
+//					block.getAnimation(resource.getLayerUp()).start();
+				}
 				Engine.getEngine(this, this.getClass()).update();
 			}else{
-				buildImages.put(p,new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", Resources.getResource(res).getSprites().getSpriteSheet(), null));
-				buildImages.get(p).setSpriteState(Resources.getResource(res).getSpriteIDs()[0]);
-				Engine.getEngine(this, this.getClass()).addImage(buildImages.get(p), buildLayer);
+				Image image = new Image(new Location(p.x*Map.DEFAULT_SQUARESIZE, p.y*Map.DEFAULT_SQUARESIZE), new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE), "", resource.getSprites().getSpriteSheet(), null);
+				image.setSpriteState(resource.getSpriteIDs()[0]);
+				Engine.getEngine(this, this.getClass()).addImage(image, buildLayer+resource.getLayerUp());
+				Animation anim = null;
+				if(resource.hasAnimation())anim = resource.getAnimationType().newAnimation(false, buildLayer+resource.getLayerUp(), image, resource);
+				if(buildBlocks.containsKey(p)){
+					buildBlocks.get(p).set(image, anim, resource.getLayerUp());
+				}else{
+					if(resource.getLayerUp()==0){
+						buildBlocks.put(p, new Block(image, null, anim, null));
+					}else{
+						buildBlocks.put(p, new Block(null, image, null, null));					
+					}
+				}
 			}
+			build[x][y][resource.getLayerUp()] = res;
 		}
-		build[x][y] = res;
 	}
 
 

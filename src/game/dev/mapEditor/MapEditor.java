@@ -3,9 +3,11 @@ package game.dev.mapEditor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 import Data.Location;
 import Data.Events.Action;
@@ -29,50 +31,82 @@ public class MapEditor {
 	
 	private Resources selectedRes;
 	
+	private int state = 0;
+	
 	public MapEditor(MapLoader mapLoader){
 		this.mapLoader = mapLoader;
 		this.map = this.mapLoader.getMap();
-		Engine.getEngine(this, this.getClass()).addLayer(false, true, false, 2,3);
+		Engine.getEngine(this, this.getClass()).addLayer(false, true, false, 4,5);
 		createGrid();
 		createMenu();
 		createHotbar();
 	}
 
 	private void createHotbar() {
-		hotbar = new Hotbar(9, new Location((1920-60*9)/2,1000), 2);
+		hotbar = new Hotbar(9, new Location((1920-60*9)/2,1000), 4);
 		hotbar.show();
 	}
 
 	private void createMenu() {
-		menu = new Menu(new Image(new Location(1920,0), new Dimension(300, 1049), "", Sprites.Sidebar.getSpriteSheet(), null), 3);	
-		menu.addButton(new Image(new Location(1670,20), new Dimension(200, 50), "", Sprites.Buttons.getSpriteSheet(), null), new Action() {
+		menu = new Menu(new Image(new Location(1920,0), new Dimension(300, 1049), "", Sprites.Sidebar.getSpriteSheet(), null), 5);	
+		menu.addButton(0,new Image(new Location(1670,20), new Dimension(200, 50), "", Sprites.Buttons.getSpriteSheet(), null), new Action() {
 			@Override
 			public void act(Object caller, Object... data) {				
 			}
 		});
 		for(int x = 0; x< 5; x++){
 			for(int y = 0; y<18; y++){
-				final int id = x+y*5;
-				menu.addButton(new Image(new Location(1920-x*50-70,y*50+90), new Dimension(40, 40), "", Sprites.Slot.getSpriteSheet(), null), new Action() {
-					Resources res = Resources.getResource(101+id);
+				menu.addButton(1, new Image(new Location(1920-x*50-70,y*50+90), new Dimension(40, 40), "", Sprites.Slot.getSpriteSheet(), null), new Action() {
 					@Override
 					public void act(Object caller, Object... data) {	
-						if(res==null) Mouse.getMouse().setImage(Sprites.Mouse.getSpriteSheet(), 0);
-						else Mouse.getMouse().setImage(res.getSprites().getSpriteSheet(), res.getSpriteIDs()[0]);
-						selectedRes = res;
 					}
 				});	
-				if(Resources.getResource(101+id)!=null){
-					Image I = new Image(new Location(1920-x*50-65,y*50+95), new Dimension(30, 30), "", Resources.getResource(101+id).getSprites().getSpriteSheet(), null);
-					I.setSpriteState(Resources.getResource(101+id).getSpriteIDs()[0]);
-					menu.addButton(I, new Action() {
-						@Override
-						public void act(Object caller, Object... data) {				
-						}
-					});	
-				}
 			}
 		}
+		HashMap<Integer, Point> Locs = new HashMap<>();
+		for(Resources resource: Resources.getResources()){
+			int key = 2;
+			if(!resource.isGround())key = 4;
+			if(resource.getLayerUp()==1)key++;
+			if(!Locs.containsKey(key))Locs.put(key, new Point(0,0));
+			Point p = Locs.get(key);
+			Image I = new Image(new Location(1920-p.x*50-65,p.y*50+95), new Dimension(30, 30), "", resource.getSprites().getSpriteSheet(), null);
+			I.setSpriteState(resource.getSpriteIDs()[0]);
+			menu.addButton(key, I, new Action() {
+				Resources res = resource;
+				@Override
+				public void act(Object caller, Object... data) {		
+					if(res==null) Mouse.getMouse().setImage(Sprites.Mouse.getSpriteSheet(), 0);
+					else Mouse.getMouse().setImage(res.getSprites().getSpriteSheet(), res.getSpriteIDs()[0]);
+					selectedRes = res;		
+				}
+			});	
+			p.setLocation(p.x+1, p.y);
+			if(p.x>=5)p.setLocation(0, p.y+1);
+		}
+		Image b = new Image(new Location(1830, 990), new Dimension(30,30), "", Sprites.Arrows.getSpriteSheet(), null);
+		b.setSpriteState(1);
+		menu.addButton(0,b, new Action() {
+			int index = 1;
+			double time = System.currentTimeMillis();
+			@Override
+			public void act(Object caller, Object... data) {
+				if(System.currentTimeMillis()-time<500)return;
+				time = System.currentTimeMillis();
+				if(Sprites.Arrows.getSpriteSheet().getSprite(index)==null) index = 0;
+				b.setSpriteState(index);
+				if(index == 0){
+					menu.disableButtons(2);
+					menu.enableButtons(3);
+				}else{
+					menu.enableButtons(2);
+					menu.disableButtons(3);
+				}
+				Engine.getEngine(this, this.getClass()).update();
+				index++;
+			}
+		});
+		menu.disableButtons(3);
 	}
 
 	private void createGrid() {
@@ -86,7 +120,7 @@ public class MapEditor {
 		SpriteSheet s = new SpriteSheet(bi);
 		for(int x = 0; x<1920/Map.DEFAULT_SQUARESIZE; x++){
 			for(int y = 0; y<1080/Map.DEFAULT_SQUARESIZE; y++){
-				Engine.getEngine(this, this.getClass()).addImage(new Image(new Location(x*Map.DEFAULT_SQUARESIZE, y*Map.DEFAULT_SQUARESIZE), d, "", s, null), 2);
+				Engine.getEngine(this, this.getClass()).addImage(new Image(new Location(x*Map.DEFAULT_SQUARESIZE, y*Map.DEFAULT_SQUARESIZE), d, "", s, null), 4);
 			}
 		}
  	}

@@ -21,8 +21,8 @@ public class GameManager {
 		this.setKillAble();
 		new TickManager(this);
 		mapEditor = new MapEditor(new MapLoader(Files.MAP_TEST.getFile()));
-		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 4);
-		new Mouse(4);
+		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 6);
+		new Mouse(6);
 		p = new Player();
 	}
 	
