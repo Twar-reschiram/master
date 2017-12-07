@@ -44,8 +44,8 @@ public class Map {
 		for(int x = 0; x<this.Width; x++){
 			for(int y = 0; y<this.Height; y++){
 				for(int i = 0; i<2; i++){
-					addToGround(ground[x][y][i], x, y);
-					addToBuild(build[x][y][i], x, y);
+					if(ground[x][y][i]!=0)addToGround(ground[x][y][i], x, y);
+					if(build [x][y][i]!=0)addToBuild(build[x][y][i], x, y);
 				}
 			}
 		}
@@ -68,6 +68,7 @@ public class Map {
 	}
 	
 	public void addToGround(int res, int x, int y) {
+//		System.out.println(res);
 		Point p = new Point(x, y);
 		if(res==0){
 			for(int i = 0; i<2; i++){

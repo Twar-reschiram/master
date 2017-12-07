@@ -46,14 +46,14 @@ public class MapLoader {
 	}
 
 	public void loadMap() {
-		System.out.println(mapFile.getSubkey("Size")[0]);
+//		System.out.println(mapFile.getSubkey("Size")[0]);
 		int[][][] ground = new int[Integer.parseInt(mapFile.get("Size.Width").get(0))][Integer.parseInt(mapFile.get("Size.Height").get(0))][2];
 		int[][][] build  = new int[ground.length][ground[0].length][2];
 		for(String y: mapFile.getSubkey("Ground")){
 			for(String x: mapFile.getSubkey("Ground."+y)){
 				ArrayList<String> ids = mapFile.get("Ground."+y+"."+x);
 				if(ids!=null && ids.size()>0){
-					for(int i = 0; i< ids.size(); i++)ground[Integer.parseInt(x)][Integer.parseInt(y)][i] = Integer.parseInt(ids.get(i));
+					for(int i = 0; i< ids.size(); i++)if(!ids.get(i).equals("0"))ground[Integer.parseInt(x)][Integer.parseInt(y)][i] = Integer.parseInt(ids.get(i));
 				}
 			}
 		}
@@ -61,7 +61,7 @@ public class MapLoader {
 			for(String x: mapFile.getSubkey("Build."+y)){
 				ArrayList<String> ids = mapFile.get("Build."+y+"."+x);
 				if(ids!=null && ids.size()>0){
-					for(int i = 0; i< ids.size(); i++)build[Integer.parseInt(x)][Integer.parseInt(y)][i] = Integer.parseInt(ids.get(i));
+					for(int i = 0; i< ids.size(); i++)if(!ids.get(i).equals("0"))build[Integer.parseInt(x)][Integer.parseInt(y)][i] = Integer.parseInt(ids.get(i));
 				}
 			}
 		}

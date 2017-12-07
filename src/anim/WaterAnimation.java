@@ -13,6 +13,7 @@ public class WaterAnimation extends Animation{
 	
 	public static HashMap<Resources, ArrayList<WaterAnimation>> Data = new HashMap<>();
 	
+	
 	private Resources res;
 
 	public WaterAnimation(Boolean newImage, Double duration, Integer layer, Image Image, Resources res) {
@@ -23,23 +24,40 @@ public class WaterAnimation extends Animation{
 		start();
 		
 		this.setAction(new Action() {
-			
 			@Override
 			public void act(Object caller, Object... data) {
-				if(index >= spriteIDs.length){
-//					System.out.println("-----");
-					index = 0;
-				}
-//				System.out.println(index+"|"+System.currentTimeMillis()+" <--- "+this);
-//				System.out.println(Data.get(res).size());
-				for(WaterAnimation anim: Data.get(res)){
-					if(anim.res.getID()!=res.getID())System.out.println("Error");
-					anim.setImage(index);
-				}
-				index++;
+					if(index >= spriteIDs.length){
+	//					System.out.println("-----");
+						index = 0;
+					}
+//					System.out.println(index+"|"+spriteIDs[index]);
+	//				System.out.println(index+"|"+System.currentTimeMillis()+" <--- "+this);
+	//				System.out.println(Data.get(res).size());
+					ArrayList<WaterAnimation> animations = Data.get(res);
+					Image.setSpriteState(index);
+					for(int i = 0; i<animations.size(); i++){
+//						System.out.println(animations.size()+"|"+i);
+						if(animations.get(i).res.getID()!=res.getID())System.out.println("Error");
+//						System.out.println(index);
+						animations.get(i)
+						.setImage(index);
+					}
+					index++;
 			}
 		});
 		
+	}
+	
+	@Override
+	public boolean tick(){
+		time += System.currentTimeMillis()-lastTime;
+		lastTime = System.currentTimeMillis();
+		if(duration<=time){
+			anim.act(this);
+			time-=duration;
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -78,7 +96,7 @@ public class WaterAnimation extends Animation{
 			Data.get(res).remove(this);
 			AnimationManager.remove(this);
 		}
-		active = false;
+	//	active = false;
 		image.setSpriteState(0);
 	}
 
@@ -87,7 +105,7 @@ public class WaterAnimation extends Animation{
 		if(Data.containsKey(res) && Data.get(res).size()>0){
 			Data.get(res).get(0).index = index;
 		}
-		image.setSpriteState(index);
+		image.setSpriteState(spriteIDs[index]);
 	}
 
 }

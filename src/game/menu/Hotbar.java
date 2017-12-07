@@ -2,6 +2,7 @@ package game.menu;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import Data.Hitbox;
@@ -81,14 +82,25 @@ public class Hotbar{
 	}
 
 	public void tick() {
-		if(!backs[0].disabled&&Engine.getInputManager().getMouseButton().contains(MouseEvent.BUTTON1)){
-			for(int i = 0; i<backs.length; i++){
-				if(backs[i].Hitbox.contains(Engine.getInputManager().MousePosition())){
-					state = i;
-					return;
+		if(!backs[0].disabled){
+			if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_1))state = 0;
+			else if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_2))state = 1; 
+			else if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_3))state = 2; 
+			else if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_4))state = 3; 
+			else if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_5))state = 4; 
+			else if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_6))state = 5; 
+			else if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_7))state = 6; 
+			else if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_8))state = 7; 
+			else if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_9))state = 8; 
+			else if(Engine.getInputManager().getMouseButton().contains(MouseEvent.BUTTON1) && contains(Engine.getInputManager().MousePosition())){
+				for(int i = 0; i<backs.length; i++){
+					if(backs[i].Hitbox.contains(Engine.getInputManager().MousePosition())){
+						state = i;
+						return;
+					}
 				}
+				state = -1;
 			}
-			state = -1;
 		}
 	}
 
@@ -107,5 +119,12 @@ public class Hotbar{
 
 	public void setSelected(int selected) {
 		this.state = selected;
+	}
+
+	public void clear() {
+		for(int i = 0; i<inv.length; i++){
+			inv[i]=null;
+			ims[i].setSpriteSheet(new SpriteSheet());
+		}
 	}
 }

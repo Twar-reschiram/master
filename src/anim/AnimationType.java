@@ -6,10 +6,21 @@ import Data.Animation.Animation;
 import Data.Image.Image;
 import data.Resources;
 
-public enum AnimationType {
+public class AnimationType {
 	
-	WATER(100, "Water", WaterAnimation.class),
-	NONE (000, "None" , null				);
+	public static AnimationType NORMAL;
+	public static AnimationType CANCEL;
+	public static AnimationType WATER;
+	public static AnimationType	NONE;
+
+	public static AnimationType create() {
+		NORMAL 	= new AnimationType(1000, "Normal", NormalAnimation.class);
+		CANCEL 	= new AnimationType(100, "Cancel", CancelAnimation.class);
+		WATER 	= new AnimationType(100, "Water" , WaterAnimation.class );
+		NONE 	= new AnimationType(000, "None"  , null				    );		
+		return null;
+	}
+	
 	
 	private String type;
 	private Class<?> animationClass;
@@ -42,5 +53,6 @@ public enum AnimationType {
 		}
 		return null;
 	}
+
 
 }
