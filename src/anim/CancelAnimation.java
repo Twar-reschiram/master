@@ -4,11 +4,11 @@ import Data.Animation.Animation;
 import Data.Animation.AnimationManager;
 import Data.Events.Action;
 import Data.Image.Image;
-import data.Resources;
+import data.Resource;
 
 public class CancelAnimation extends Animation{
 
-	public CancelAnimation(Boolean newImage, Double duration, Integer layer, Image I, Resources res) {
+	public CancelAnimation(Boolean newImage, Double duration, Integer layer, Image I, Resource res) {
 		super(newImage, duration, layer, I, res.getSpriteIDs());
 		
 		setAction(new Action() {

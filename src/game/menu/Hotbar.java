@@ -10,13 +10,13 @@ import Data.Location;
 import Data.Image.Image;
 import Data.Image.SpriteSheet;
 import Engine.Engine;
-import data.Resources;
+import data.Resource;
 import game.map.Map;
 import sprites.Sprites;
 
 public class Hotbar{
 	
-	private Resources[] inv;
+	private Resource[] inv;
 	private Image[] ims;
 	private Image[] backs;
 	
@@ -24,7 +24,7 @@ public class Hotbar{
 	private Hitbox hb;
 	
 	public Hotbar(int size, Location l, int layer){
-		this.inv = new Resources[size];
+		this.inv = new Resource[size];
 		this.ims = new Image[size];
 		this.backs = new Image[size];
 		hb = new Hitbox(l.getX(), l.getY(), (Map.DEFAULT_SQUARESIZE+20)*9, Map.DEFAULT_SQUARESIZE);
@@ -38,7 +38,7 @@ public class Hotbar{
 		}
 	}	
 	
-	public void addRecources(Resources... resources){
+	public void addRecources(Resource... resources){
 		for(int i = 0; i< inv.length; i++){
 			if(inv[i]==null){
 				for(int r=0; r<resources.length; r++){
@@ -55,7 +55,7 @@ public class Hotbar{
 		Engine.getEngine(this, this.getClass()).update();
 	}
 	
-	public void setRecource(Resources res, int id){
+	public void setRecource(Resource res, int id){
 		inv[id] = res;
 		ims[id].setSpriteSheet(inv[id].getSprites().getSpriteSheet());
 		ims[id].setSpriteState(inv[id].getSpriteIDs()[0]);
@@ -104,7 +104,7 @@ public class Hotbar{
 		}
 	}
 
-	public Resources getSlected() {
+	public Resource getSlected() {
 		if(state==-1)return null;
 		return inv[state];
 	}

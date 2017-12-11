@@ -6,37 +6,45 @@ import java.awt.event.WindowListener;
 
 import Engine.Engine;
 import anim.AnimationType;
+import data.MapResource;
 import data.Mouse;
-import data.Resources;
+import data.VehicleResource;
 import files.Files;
 import game.dev.mapEditor.MapEditor;
 import game.map.Map;
 import game.map.MapLoader;
 import game.tick.TickManager;
+import game.vehicle.VehiclePartType;
+import game.vehicle.editor.VehicleEditor;
 import sprites.Sprites;
 
 public class GameManager {
 	
 	MapEditor mapEditor;
+	VehicleEditor vehicleEditor;
 	Player p;
 	
 	public GameManager(){
 		Sprites.create();
 		AnimationType.create();
-		Resources.create();
+		VehiclePartType.create();
+		MapResource.create();
+		VehicleResource.create();
 		new Engine(1920, 1080, new Dimension(1920,1080));
 		this.setKillAble();
 		new TickManager(this);
-		mapEditor = new MapEditor(new MapLoader(Files.MAP_TEST.getFile()));
-		//Map map = new MapLoader(Files.MAP_TEST.getFile()).getMap();
-		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 6);
-		new Mouse(6);
-		p = new Player(mapEditor.getMap());
+		//mapEditor = new MapEditor(new MapLoader(Files.MAP_TEST.getFile()));
+		Map map = new MapLoader(Files.MAP_TEST.getFile()).getMap();
+		vehicleEditor = new VehicleEditor(4, new Dimension(40,20));
+		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 7);
+		new Mouse(7);
+		p = new Player(map);
 	}
 	
 	double lasttime = System.currentTimeMillis();
 	public void tick(){
 		if(mapEditor!=null)mapEditor.tick();
+		if(vehicleEditor!=null)vehicleEditor.tick();
 		if(Mouse.getMouse()!=null)Mouse.getMouse().tick();
 		if(p!=null)p.tick();
 //		if(Engine.getInputManager().getKeyDown().contains(KeyEvent.VK_E)){

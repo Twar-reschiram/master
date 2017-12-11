@@ -1,21 +1,17 @@
 package game.dev.mapEditor;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import Data.Location;
 import Data.Events.Action;
 import Data.Image.Image;
-import Data.Image.SpriteSheet;
 import Engine.Engine;
 import data.Mouse;
-import data.Resources;
+import data.MapResource;
 import game.map.Map;
 import game.map.MapLoader;
 import game.menu.Grid;
@@ -31,7 +27,7 @@ public class MapEditor {
 	private Hotbar hotbar;
 	private Grid grid;
 	
-	private Resources selectedRes;
+	private MapResource selectedRes;
 	
 	private boolean build = false;
 	
@@ -39,8 +35,8 @@ public class MapEditor {
 		this.mapLoader = mapLoader;
 		this.map = this.mapLoader.getMap();
 		Engine.getEngine(this, this.getClass()).addLayer(false, false, false, 4);
-		Engine.getEngine(this, this.getClass()).addLayer(false, true , false, 5);
-		this.grid = new Grid(4, 1920/Map.DEFAULT_SQUARESIZE, 1080/Map.DEFAULT_SQUARESIZE, true);
+		Engine.getEngine(this, this.getClass()).addLayer(false, true , false, 5,6);
+		this.grid = new Grid(4, 1920/Map.DEFAULT_SQUARESIZE, 1080/Map.DEFAULT_SQUARESIZE, new Location(0,0), true);
 		createMenu();
 		createHotbar();
 	}
@@ -86,7 +82,7 @@ public class MapEditor {
 			}
 		}
 		HashMap<Integer, Point> Locs = new HashMap<>();
-		for(Resources resource: Resources.getResources()){
+		for(MapResource resource: MapResource.getMapResource()){
 			int key = 2;
 			if(resource.getLayerUp()==1)key++;
 			if(!Locs.containsKey(key))Locs.put(key, new Point(0,0));
@@ -94,7 +90,7 @@ public class MapEditor {
 			Image I = new Image(new Location(1920-p.x*50-65,p.y*50+95), new Dimension(30, 30), "", resource.getSprites().getSpriteSheet(), null);
 			I.setSpriteState(resource.getSpriteIDs()[0]);
 			menu.addButton(key, I, new Action() {
-				Resources res = resource;
+				MapResource res = resource;
 				@Override
 				public void act(Object caller, Object... data) {		
 					if(res==null) Mouse.getMouse().setImage(Sprites.Mouse.getSpriteSheet(), 0);
@@ -152,7 +148,7 @@ public class MapEditor {
 //		}
 // 	}
 
-	private Resources res = null;
+	private MapResource res = null;
 	public void tick() {
 		grid.tick();
 		if(menu.isVisible()){
@@ -184,7 +180,7 @@ public class MapEditor {
 				if(hotbar.getSlected()!=null && !hotbar.getSlected().equals(res)){
 					Mouse.getMouse().setImage(hotbar.getSlected().getSprites().getSpriteSheet(), hotbar.getSlected().getSpriteIDs()[0]);
 				}
-				res = hotbar.getSlected();
+				res = (MapResource) hotbar.getSlected();
 				if(!hotbar.contains(Engine.getInputManager().MousePosition())){
 					int x = Mouse.getMouse().getPosition().x/Map.DEFAULT_SQUARESIZE;
 					int y = Mouse.getMouse().getPosition().y/Map.DEFAULT_SQUARESIZE; 

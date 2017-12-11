@@ -38,7 +38,7 @@ public class Menu {
 		Button button = new Button(a, I);
 		buttons.get(id).add(button);
 		I.disabled = true;
-		Engine.getEngine(this, this.getClass()).addImage(I, layer);
+		Engine.getEngine(this, this.getClass()).addImage(I, layer+1);
 	}
 	
 	public void show(){
@@ -64,17 +64,24 @@ public class Menu {
 			if(background.Hitbox.getWidth()!=size.width){
 				grow += Menu.OPENSPEED*TickManager.getDeltaTime();
 				if(grow>=size.width){
+//					System.out.println("==="+grow+"===");
 					grow = size.width;
 					changeSize = -1;
 					for(int id: buttonActive.keySet()){
-						if(buttonActive.get(id))for(Button button: buttons.get(id))button.getImage().disabled = false;
+//						System.out.println("VIEW"+buttonActive.get(id)+":"+buttons.get(id));
+						if(buttonActive.get(id))for(Button button: buttons.get(id)){
+							button.getImage().disabled = false;
+//							System.out.println(button);
+						}
 					}
+//					System.out.println("===["+changeSize+" -> "+grow+"|"+size.width+"]===");
 				}
 				background.Hitbox.setDimension((int) grow, background.Hitbox.getHeigth());
 				background.Hitbox.setLocation((int) (size.getHeight()-grow), background.Hitbox.getY());
 				Engine.getEngine(this, this.getClass()).update();
 			}
 		}else if(changeSize == 1){
+//			System.out.println("REMOVE");
 			if(background.Hitbox.getWidth()!=0){
 				grow -= Menu.OPENSPEED*TickManager.getDeltaTime();
 				if((int)grow<=0){
@@ -109,13 +116,16 @@ public class Menu {
 	}
 	
 	public void disableButtons(int id){
+		if(buttonActive.get(id)==false)return;
 		buttonActive.put(id, false);
 		for(Button button:buttons.get(id)){
+//			System.out.println(button);
 			button.getImage().disabled = true;
 		}
 	}
 	
 	public void enableButtons(int id){
+		if(buttonActive.get(id)==true)return;
 		buttonActive.put(id, true);
 		for(Button button:buttons.get(id)){
 			button.getImage().disabled = false;

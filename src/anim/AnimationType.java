@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import Data.Animation.Animation;
 import Data.Image.Image;
-import data.Resources;
+import data.Resource;
 
 public class AnimationType {
 	
@@ -42,10 +42,10 @@ public class AnimationType {
 		return null;
 	}
 	
-	public Animation newAnimation(boolean newImage, int layer, Image image, Resources resource){
+	public Animation newAnimation(boolean newImage, int layer, Image image, Resource resource){
 		if(this.animationClass!=null){
 			try {
-				return (Animation) this.animationClass.getDeclaredConstructor(Boolean.class, Double.class, Integer.class, Image.class, Resources.class).newInstance(newImage, this.duration, layer, image, resource);
+				return (Animation) this.animationClass.getDeclaredConstructor(Boolean.class, Double.class, Integer.class, Image.class, Resource.class).newInstance(newImage, this.duration, layer, image, resource);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();

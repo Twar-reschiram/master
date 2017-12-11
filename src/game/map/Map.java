@@ -8,7 +8,7 @@ import Data.Location;
 import Data.Animation.Animation;
 import Data.Image.Image;
 import Engine.Engine;
-import data.Resources;
+import data.MapResource;
 
 public class Map {
 	
@@ -73,7 +73,7 @@ public class Map {
 		if(res==0){
 			for(int i = 0; i<2; i++){
 				if(ground[x][y][i]!=0){
-					Engine.getEngine(this, this.getClass()).removeImage(groundLayer+Resources.getResource(ground[x][y][i]).getLayerUp(), groundBlocks.get(p).getImage(i));
+					Engine.getEngine(this, this.getClass()).removeImage(groundLayer+MapResource.getMapResource(ground[x][y][i]).getLayerUp(), groundBlocks.get(p).getImage(i));
 					if(groundBlocks.get(p).getAnimation(i)!=null){
 						groundBlocks.get(p).getAnimation(i).stop();
 					}
@@ -83,7 +83,7 @@ public class Map {
 			groundBlocks.remove(p);
 		}else{
 //			System.out.println(res);
-			Resources resource = Resources.getResource(res);
+			MapResource resource = MapResource.getMapResource(res);
 			if(ground[x][y][resource.getLayerUp()]!=0 && groundBlocks.get(p).getImage(resource.getLayerUp())!=null){
 				Block block = groundBlocks.get(p);
 				if(block.getAnimation(resource.getLayerUp())!=null)block.getAnimation(resource.getLayerUp()).stop();
@@ -119,7 +119,7 @@ public class Map {
 		if(res==0){
 			for(int i = 0; i<2; i++){
 				if(build[x][y][i]!=0){
-					Engine.getEngine(this, this.getClass()).removeImage(buildLayer+Resources.getResource(build[x][y][i]).getLayerUp(), buildBlocks.get(p).getImage(i));
+					Engine.getEngine(this, this.getClass()).removeImage(buildLayer+MapResource.getMapResource(build[x][y][i]).getLayerUp(), buildBlocks.get(p).getImage(i));
 					if(buildBlocks.get(p).getAnimation(i)!=null){
 						buildBlocks.get(p).getAnimation(i).stop();
 					}
@@ -129,7 +129,7 @@ public class Map {
 			buildBlocks.remove(p);
 		}else{
 //			System.out.println(res);
-			Resources resource = Resources.getResource(res);
+			MapResource resource = MapResource.getMapResource(res);
 			if(build[x][y][resource.getLayerUp()]!=0 && buildBlocks.get(p).getImage(resource.getLayerUp())!=null){
 				Block block = buildBlocks.get(p);
 				if(block.getAnimation(resource.getLayerUp())!=null)block.getAnimation(resource.getLayerUp()).stop();

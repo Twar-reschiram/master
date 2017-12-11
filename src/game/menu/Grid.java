@@ -19,26 +19,30 @@ public class Grid {
 	private Image[][] images;
 	private Point lastPosition = new Point(Mouse.XOff, Mouse.YOff);
 	private boolean movable = false;
+	private Location topLeft;
 	
-	public Grid(int layer, int width, int heigth, boolean movable){
+	public Grid(int layer, int width, int heigth, Location topLeft, boolean movable){
 		this.layer = layer;
-		this.images = new Image[width+2][heigth+2];
+		int modi = 0;
+		if(movable)modi=1;
+		this.images = new Image[width+modi*2][heigth+modi*2];
 		this.movable = movable;
-		create();
+		this.topLeft = topLeft;
+		create(modi);
 	}
 
-	private void create() {
+	private void create(int modi) {
 		Dimension d = new Dimension(Map.DEFAULT_SQUARESIZE, Map.DEFAULT_SQUARESIZE);
 		BufferedImage bi = Image.createEmptyImage(d.width, d.height);
 		Graphics2D g = bi.createGraphics();
-		g.setColor(new Color(50,50,50,50));
+		g.setColor(new Color(50,50,50,200));
 		g.fillRect(0, 0, d.width, d.height);
 		g.setBackground(new Color(0,0,0,0));
 		g.clearRect(1, 1, d.width-2, d.height-2);
 		SpriteSheet s = new SpriteSheet(bi);
 		for(int x = 0; x<images.length; x++){
 			for(int y = 0; y<images[x].length; y++){
-				this.images[x][y] = new Image(new Location((x-1)*Map.DEFAULT_SQUARESIZE, (y-1)*Map.DEFAULT_SQUARESIZE), d, "", s, null);
+				this.images[x][y] = new Image(new Location((x-modi)*Map.DEFAULT_SQUARESIZE+topLeft.x, (y-modi)*Map.DEFAULT_SQUARESIZE+topLeft.y), d, "", s, null);
 				Engine.getEngine(this, this.getClass()).addImage(this.images[x][y], layer);
 //				System.out.println(this.images[x][y].disabled);
 			}

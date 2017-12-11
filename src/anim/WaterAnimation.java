@@ -7,16 +7,16 @@ import Data.Animation.Animation;
 import Data.Animation.AnimationManager;
 import Data.Events.Action;
 import Data.Image.Image;
-import data.Resources;
+import data.Resource;
 
 public class WaterAnimation extends Animation{
 	
-	public static HashMap<Resources, ArrayList<WaterAnimation>> Data = new HashMap<>();
+	public static HashMap<Resource, ArrayList<WaterAnimation>> Data = new HashMap<>();
 	
 	
-	private Resources res;
+	private Resource res;
 
-	public WaterAnimation(Boolean newImage, Double duration, Integer layer, Image Image, Resources res) {
+	public WaterAnimation(Boolean newImage, Double duration, Integer layer, Image Image, Resource res) {
 		super(newImage, duration, layer, Image, res.getSpriteIDs());
 		
 		this.res = res;
